@@ -18,7 +18,13 @@ let app = Express()
 app.use(BodyParser.urlencoded({
 	extended: true
 }))
-
+app.use(function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    next();
+  });
+  
+  
 // attempt to connect to mongodb
 const assert = require('assert');
 
@@ -26,7 +32,7 @@ const assert = require('assert');
 const url = require('./config/mongoURL').mongoURL;
 
 // Database Name
-const dbName = 'osm';
+const dbName = 'geospatial';
 
 // Create  new MongoClient
 const client = new Mongodb.MongoClient(url)
