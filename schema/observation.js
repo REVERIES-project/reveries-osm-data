@@ -5,7 +5,9 @@ const observationSchema = Schema({
     coordinates: [Number],
     specie: String,
     genus:String,
-    osmId:String
+    osmId:String,
+    image:String,
+    date:Date
   });
   
 

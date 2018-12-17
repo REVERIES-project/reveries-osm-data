@@ -39,8 +39,9 @@ module.exports = function (app, db, logger) {
     observation.coordinates=req.body.releve.coordinates
     observation.genus=req.body.releve.genus
     observation.specie=req.body.releve.specie
-    console.log(req.body)
+    observation.image=req.body.releve.image
     observation.osmId=req.session.user
+    observation.date=Date.now()
     observation.save()
     res.send({success:true})
   })

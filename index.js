@@ -31,9 +31,10 @@ app.use(session({
 }));
 
 app.use(BodyParser.urlencoded({
-	extended: true
+    extended: true,
+    limit: '50mb'
 }))
-app.use(BodyParser.json())
+app.use(BodyParser.json({limit: '50mb'}))
 
   
   
