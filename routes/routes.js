@@ -1,6 +1,9 @@
 module.exports = function (app, db, logger) {
   var Tree = require('../schema/tree')
   var Observation=require('../schema/observation')
+  var express = require('express')
+
+  app.use(express.static('../osm-vuejs/www/'))
   app.get('/trees', function (req, res) {
 
 

@@ -4,8 +4,10 @@ let cors=require('cors')
 var mongoose = require('mongoose')
 let Winston = require('winston')
 let BodyParser=require('body-parser')
-let ENV = "development"
-let PORT = "8000"
+let ENV=process.env.NODE_ENV
+let PORT=process.env.PORT
+let https=require('https')
+let sparqlClient=require('./sparql/sparql')
 
 // create logger first
 var logger = Winston.createLogger({
@@ -18,7 +20,7 @@ var logger = Winston.createLogger({
 // creating express server
 let app = Express()
 app.use(cors({
-    origin:['http://localhost:3000','http://osm.reveries-project.fr'],
+    origin:['http://localhost:8000','http://localhost:3000','http://osm.reveries-project.fr','https://osm.reveries-project.fr'],
     methods:['GET','POST'],
     credentials: true // enable set cookie
 }
@@ -54,6 +56,19 @@ database.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
 // Create  new MongoClient
 require('./routes/routes')(app,logger)
-app.listen(PORT)
+require('./routes/keyRoute')(app,sparqlClient)
+if (ENV === "production") {
+	var secureServer = https.createServer({
+			key: fs.readFileSync('/etc/letsencrypt/live/osm.reveries-project.fr/privkey.pem'),
+			cert: fs.readFileSync('/etc/letsencrypt/live/osm.reveries-project.fr/cert.pem')
+		}, app)
+		.listen(PORT, function () {
+			console.log('Secure Server listening on port ' + PORT)
+		})
+}
 
+//start a simple server for developpement
+if (ENV === "development") {
+	app.listen(PORT)
+}
 // Use connect method to connect to the Server
