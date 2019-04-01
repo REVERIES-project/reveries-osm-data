@@ -36,6 +36,9 @@ module.exports = function (app, db, logger) {
   app.get('/user',function(req,res){
     res.send(req.session)
   })
+  app.post('/modifyObservation',function(req,res){
+    
+  })
   app.post('/observation',function(req,res){
     console.log(req.body.releve)
     var observation=new Observation()
@@ -46,7 +49,7 @@ module.exports = function (app, db, logger) {
     observation.osmId=req.session.user
     observation.date=Date.now()
     observation.save()
-    res.send({success:true})
+    res.send({success:true,observation:observation})
   })
   app.get('/observation',function(req,res){
     Observation.find({osmId:req.session.user})
