@@ -59,8 +59,8 @@ require('./routes/routes')(app,logger)
 require('./routes/keyRoute')(app,sparqlClient)
 if (ENV === "production") {
 	var secureServer = https.createServer({
-			key: fs.readFileSync('/etc/letsencrypt/live/osm.reveries-project.fr/privkey.pem'),
-			cert: fs.readFileSync('/etc/letsencrypt/live/osm.reveries-project.fr/cert.pem')
+			key: fs.readFileSync('/etc/letsencrypt/live/albiziapp.reveries-project.fr/privkey.pem'),
+			cert: fs.readFileSync('/etc/letsencrypt/live/albiziapp.reveries-project.fr/cert.pem')
 		}, app)
 		.listen(PORT, function () {
 			console.log('Secure Server listening on port ' + PORT)

@@ -2,8 +2,19 @@ module.exports = function (app, db, logger) {
   var Tree = require('../schema/tree')
   var Observation=require('../schema/observation')
   var express = require('express')
-
+  var axios=require('axios')
   app.use(express.static('../osm-vuejs/www/'))
+  app.get('/osmdata',function(req,res){
+    let south=req.query.south
+    let west=req.query.west
+    let north=req.query.north
+    let east=req.query.east
+    axios.get('http://overpass-api.de/api/interpreter?data=[out:json];node["natural"="tree"]('+south+','+west+','+north+','+east+');out;')
+    .then(function(response){res.send(response.data.elements)})
+})
+app.get('/osmtest',function(req,res){
+  axios.get('http://overpass-api.de/api/interpreter?data=[out:json];node[%22natural%22=%22tree%22](46.900246243056245,6.356577873229981,46.906667550492045,6.37007474899292);out;').then(function(response){res.send(response.data);console.log(response.data)})
+})
   app.get('/trees', function (req, res) {
 
 
@@ -37,7 +48,7 @@ module.exports = function (app, db, logger) {
     res.send(req.session)
   })
   app.post('/modifyObservation',function(req,res){
-    
+
   })
   app.post('/observation',function(req,res){
     console.log(req.body.releve)
