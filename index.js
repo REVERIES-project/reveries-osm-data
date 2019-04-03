@@ -4,6 +4,7 @@ let cors=require('cors')
 var mongoose = require('mongoose')
 let Winston = require('winston')
 let BodyParser=require('body-parser')
+let fs=require('fs')
 let ENV=process.env.NODE_ENV
 let PORT=process.env.PORT
 let https=require('https')
@@ -20,7 +21,7 @@ var logger = Winston.createLogger({
 // creating express server
 let app = Express()
 app.use(cors({
-    origin:['http://localhost:8000','http://localhost:3000','http://osm.reveries-project.fr','https://osm.reveries-project.fr'],
+    origin:['http://localhost:8000','http://localhost:3000','http://albiziapp.reveries-project.fr','https://albiziapp.reveries-project.fr'],
     methods:['GET','POST'],
     credentials: true // enable set cookie
 }
