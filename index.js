@@ -8,8 +8,10 @@ let fs=require('fs')
 let ENV=process.env.NODE_ENV
 let PORT=process.env.PORT
 let https=require('https')
+var httpProxy = require('http-proxy');
 let sparqlClient=require('./sparql/sparql')
-
+var proxy = httpProxy.createProxyServer({ ws: true });
+console.log(ENV)
 // create logger first
 var logger = Winston.createLogger({
     transports: [
@@ -26,8 +28,20 @@ app.use(cors({
     credentials: true // enable set cookie
 }
 ));
+app.get('/socket.io/*', function(req, res) {
+    //console.log("proxying GET request", req.url);
+    proxy.web(req, res, { target: 'http://localhost:8081'});
+  });
+app.post('/socket.io/*', function(req, res) {
+    //console.log("proxying POST request", req.url);
+    proxy.web(req, res, { target: 'http://localhost:8081'});
+  });
+  app.post('/setupImages', function(req, res) {
+    console.log("proxying setup Image", req.url);
+    proxy.web(req, res, { target: 'http://localhost:8081'});
+  });
 
-app.use(session({
+  app.use(session({
     resave: true,
     saveUninitialized: true,
     secret: "thedogsleepsatnight",
@@ -70,6 +84,7 @@ if (ENV === "production") {
 
 //start a simple server for developpement
 if (ENV === "development") {
-	app.listen(PORT)
+    server=app.listen(PORT)
+   // server.on('upgrade',function(event){console.log(event)})
 }
 // Use connect method to connect to the Server
