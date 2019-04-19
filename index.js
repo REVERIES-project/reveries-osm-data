@@ -12,6 +12,16 @@ var httpProxy = require('http-proxy');
 let sparqlClient=require('./sparql/sparql')
 var proxy = httpProxy.createProxyServer({ ws: true });
 console.log(ENV)
+var Pusher = require('pusher');
+
+var pusher = new Pusher({
+  appId: '757395',
+  key: 'f204a3eb6cfeb87e594b',
+  secret: '5b48ab538756ebf88912',
+  cluster: 'eu',
+  encrypted: true
+});
+
 // create logger first
 var logger = Winston.createLogger({
     transports: [
@@ -70,7 +80,7 @@ var database = mongoose.connection;
 database.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
 // Create  new MongoClient
-require('./routes/routes')(app,logger)
+require('./routes/routes')(app,logger,pusher)
 require('./routes/keyRoute')(app,sparqlClient)
 if (ENV === "production") {
 	var secureServer = https.createServer({

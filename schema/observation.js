@@ -7,7 +7,9 @@ const observationSchema = Schema({
     genus:String,
     osmId:String,
     image:String,
-    date:Date
+    common:String,
+    date:Date,
+    validation:[Object]
   });
   
 

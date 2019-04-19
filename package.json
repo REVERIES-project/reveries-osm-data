@@ -21,6 +21,7 @@
     "https": "^1.0.0",
     "mongodb": "^3.1.9",
     "mongoose": "^5.3.15",
+    "pusher": "^2.2.0",
     "sparql-client": "^0.2.0",
     "winston": "^3.1.0"
   }
