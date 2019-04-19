@@ -8,8 +8,12 @@ const observationSchema = Schema({
     osmId:String,
     image:String,
     common:String,
+    authorName:String,
+    modifierName:String,
+    modifierId:String,
     date:Date,
-    validation:[Object]
+    validation:[Object],
+    prev:[Object]
   });
   
 

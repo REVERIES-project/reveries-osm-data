@@ -4,7 +4,7 @@ module.exports = function (app, logger,pusher) {
   var express = require('express')
   var axios = require('axios')
   app.use(express.static('../osm-vuejs/www/'))
-  app.get('/osmdata', function (req, res) {
+  app.get('/api/osmdata', function (req, res) {
     let south = req.query.south
     let west = req.query.west
     let north = req.query.north
@@ -44,16 +44,16 @@ module.exports = function (app, logger,pusher) {
         res.send(toSend)
       })
   })
-  app.get('/login', function (req, res) {
+  app.get('/api/login', function (req, res) {
     req.session.user = req.query.id
     req.session.username = req.query.name
     req.session.save()
     res.send('ok')
   })
-  app.get('/user', function (req, res) {
+  app.get('/api/user', function (req, res) {
     res.send(req.session)
   })
-  app.post('/validate', function (req, res) {
+  app.post('/api/validate', function (req, res) {
     console.log(req.body.id)
     Observation.findById(req.body.id)
       .exec(function (err, observation) {
@@ -68,17 +68,27 @@ module.exports = function (app, logger,pusher) {
         })
       })
   })
-  app.post('/modifyObservation', function (req, res) {
-
+  app.post('/api/modifyObservation', function (req, res) {
+    Observation.findById(req.body.releve._id)
+    .exec(function(err,result){
+      result.prev.push(result.toObject())
+      result.genus = req.body.releve.genus
+      result.common = req.body.releve.common
+      result.specie = req.body.releve.specie
+      result.image = req.body.releve.image
+      result.modifierId = req.session.user
+      result.modifierName=req.session.username
+      result.date = Date.now()
+      result.validation.push({
+        name: req.session.username,
+        id: req.session.user
+      })
+      pusher.trigger('observation','modify_obs',result)
+      result.save()
+      res.send({success:true,observation:result})
+    })
   })
-  app.post('/pusher/auth', function(req, res) {
-    var socketId = req.body.socket_id;
-    var channel = req.body.channel_name;
-    var auth = pusher.authenticate(socketId, channel);
-    res.send(auth);
-  });
-  
-  app.post('/observation', function (req, res) {
+  app.post('/api/observation', function (req, res) {
     console.log(req.body.releve)
     var observation = new Observation()
     observation.coordinates = req.body.releve.coordinates
@@ -87,6 +97,7 @@ module.exports = function (app, logger,pusher) {
     observation.specie = req.body.releve.specie
     observation.image = req.body.releve.image
     observation.osmId = req.session.user
+    observation.authorName
     observation.date = Date.now()
     observation.validation.push({
       name: req.session.username,
@@ -94,17 +105,16 @@ module.exports = function (app, logger,pusher) {
     })
     observation.save()
     let obs=observation.toJSON()
-    obs.validated=true
     pusher.trigger('observation','new_obs',obs)
+    obs.validated=true
 
     res.send({
       success: true,
       observation: obs
     })
   })
-  app.get('/observation', function (req, res) {
+  app.get('/api/observation', function (req, res) {
     Observation.find({
-        osmId: req.session.user
       })
       .exec(function (err, results) {
         for (var i=0;i<results.length;i++) {
