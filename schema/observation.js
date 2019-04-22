@@ -3,6 +3,7 @@ var Schema = mongoose.Schema;
 
 const observationSchema = Schema({
     coordinates: [Number],
+    
     specie: String,
     genus:String,
     osmId:String,

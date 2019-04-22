@@ -54,8 +54,7 @@ module.exports = function (app, logger,pusher) {
     res.send(req.session)
   })
   app.post('/api/validate', function (req, res) {
-    console.log(req.body.id)
-    Observation.findById(req.body.id)
+    Observation.findById(req.body.releve._id)
       .exec(function (err, observation) {
         let validation = {
           name: req.session.username,
@@ -63,8 +62,11 @@ module.exports = function (app, logger,pusher) {
         }
         observation.validation.push(validation)
         observation.save()
+        pusher.trigger('observation','validate_obs',observation)
+        let obs=observation.toJSON()
+        obs.validated=true
         res.send({
-          success: true
+          success: true,observation:obs
         })
       })
   })
@@ -79,13 +81,15 @@ module.exports = function (app, logger,pusher) {
       result.modifierId = req.session.user
       result.modifierName=req.session.username
       result.date = Date.now()
-      result.validation.push({
+      result.validation=[{
         name: req.session.username,
         id: req.session.user
-      })
+      }]
       pusher.trigger('observation','modify_obs',result)
       result.save()
-      res.send({success:true,observation:result})
+      let observation=result.toJSON()
+      observation.validated=true
+      res.send({success:true,observation:observation})
     })
   })
   app.post('/api/observation', function (req, res) {
@@ -97,7 +101,7 @@ module.exports = function (app, logger,pusher) {
     observation.specie = req.body.releve.specie
     observation.image = req.body.releve.image
     observation.osmId = req.session.user
-    observation.authorName
+    observation.authorName=req.session.username
     observation.date = Date.now()
     observation.validation.push({
       name: req.session.username,
