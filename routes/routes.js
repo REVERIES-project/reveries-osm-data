@@ -102,6 +102,7 @@ module.exports = function (app, logger,pusher) {
     observation.image = req.body.releve.image
     observation.osmId = req.session.user
     observation.identification=req.body.releve.identificationMode
+    observation.identificationValue={success:false}
     observation.authorName=req.session.username
     observation.date = Date.now()
     observation.validation.push({
