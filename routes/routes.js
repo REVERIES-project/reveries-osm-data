@@ -1,6 +1,7 @@
 module.exports = function (app, logger,pusher) {
   var Tree = require('../schema/tree')
   var Observation = require('../schema/observation')
+  var Identification = require('../schema/identification')
   var express = require('express')
   var axios = require('axios')
   app.use(express.static('../osm-vuejs/www/'))
@@ -92,6 +93,24 @@ module.exports = function (app, logger,pusher) {
       res.send({success:true,observation:observation})
     })
   })
+  app.post('/api/identification',function(req,res){
+    var identification=new Identification()
+    identification.coordinates = req.body.releve.coordinates
+    identification.genus = req.body.releve.genus
+    identification.common = req.body.releve.common
+    identification.specie = req.body.releve.specie
+    identification.image = req.body.releve.image
+    identification.releveId = req.body.releve._id
+    identification.osmId = req.body.osmId
+    identification.date = Date.now()
+    identification.userGenus = req.body.releve.identificationValue.genus
+    identification.userCommon = req.body.releve.identificationValue.common
+    identification.userSpecie = req.body.releve.identificationValue.specie
+    identification.userOsmId = req.session.user
+    identification.save()
+    res.send({success:true})
+
+  })
   app.post('/api/observation', function (req, res) {
     console.log(req.body.releve)
     var observation = new Observation()
@@ -101,8 +120,7 @@ module.exports = function (app, logger,pusher) {
     observation.specie = req.body.releve.specie
     observation.image = req.body.releve.image
     observation.osmId = req.session.user
-    observation.identification=req.body.releve.identificationMode
-    observation.identificationValue={success:false}
+    observation.identificationValue={identification:req.body.releve.identificationMode,success:false}
     observation.authorName=req.session.username
     observation.date = Date.now()
     observation.validation.push({
@@ -132,8 +150,21 @@ module.exports = function (app, logger,pusher) {
             results[i].validated=true
           }
         }
+        Identification.find()
+        .exec(function(err,identifications){
+          for(let releve of results){
+            for(let identification of identifications){
+              if(releve._id==identification.releveId){
+                if(identification.userOsmId==req.session.user){
+                  releve.identificationValue={identification:true,success:true}
+                }
+              }
+            }
+          }
+          res.send(results)
+
+        })
         //console.log(results)
-        res.send(results)
       })
   })
 
