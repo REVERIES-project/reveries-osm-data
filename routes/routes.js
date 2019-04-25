@@ -143,7 +143,7 @@ module.exports = function (app, logger,pusher) {
       .exec(function (err, results) {
         for (var i=0;i<results.length;i++) {
           let validated = results[i].validation.find(function (value) {
-            return value.id == req.session.user
+            return value && value.id == req.session.user
           })
           if (validated) {
             results[i] = results[i].toJSON()
