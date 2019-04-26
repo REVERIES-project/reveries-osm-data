@@ -1,7 +1,7 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
-const identificationSchema = Schema({
+const verificationSchema = Schema({
     coordinates: [Number],
     
     specie: String,
@@ -9,14 +9,15 @@ const identificationSchema = Schema({
     osmId:String,
     image:String,
     common:String,
+    username:String,
     userSpecie: String,
     userGenus:String,
-    username:String,
     userOsmId:String,
     userCommon:String,
+    validated:Boolean,
     date:Date,
     releveId:String,
 });
   
 
-module.exports = mongoose.model('identification', identificationSchema);
+module.exports = mongoose.model('verification', verificationSchema);

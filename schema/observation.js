@@ -15,8 +15,8 @@ const observationSchema = Schema({
     date:Date,
     validation:[Object],
     prev:[Object],
-    identification:Boolean,
     identificationValue:Object,
+    verificationValue:Object,
   });
   
 
