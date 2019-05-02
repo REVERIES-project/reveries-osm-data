@@ -13,6 +13,7 @@ const observationSchema = Schema({
     modifierName:String,
     modifierId:String,
     date:Date,
+    contributor:[String],
     validation:[Object],
     prev:[Object],
     identificationValue:Object,

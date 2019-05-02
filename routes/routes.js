@@ -89,11 +89,22 @@ module.exports = function (app, logger, pusher) {
   app.post('/api/modifyObservation', function (req, res) {
     Observation.findById(req.body.releve._id)
       .exec(function (err, result) {
-        result.prev.push(result.toObject())
+        let prev = result.toObject()
+        delete prev.coordinates
+        delete prev.contributor
+        if (prev.prev) {
+          delete prev.prev
+        }
+        result.prev.push(prev)
         result.genus = req.body.releve.genus
         result.common = req.body.releve.common
         result.specie = req.body.releve.specie
-        result.image = req.body.releve.image
+        if (req.body.releve.image) {
+          result.image = req.body.releve.image
+        } else {
+          result.image = prev.image
+        }
+        result.contributor.push(req.session.user)
         result.modifierId = req.session.user
         result.modifierName = req.session.username
         result.date = Date.now()
@@ -118,14 +129,12 @@ module.exports = function (app, logger, pusher) {
         res.send(results)
       })
   })
-
-  app.get('/api/verification', function (req, res) {
-    Verification.find({}).sort('userOsmId')
-      .exec(function (err, results) {
-        res.send(results)
-      })
+  app.get('/api/identification',function(req,res){
+  Identification.find()
+  .exec(function(err,response){
+    res.send(response)
   })
-
+  })
   app.post('/api/identification', function (req, res) {
     var identification = new Identification()
     identification.coordinates = req.body.releve.coordinates
@@ -148,38 +157,6 @@ module.exports = function (app, logger, pusher) {
 
   })
 
-  app.post('/api/verification', function (req, res) {
-    Observation.findById(req.body.releve._id)
-      .exec(function (err, releve) {
-
-        var verification = new Verification()
-        verification.coordinates = releve.coordinates
-        verification.genus = releve.genus
-        verification.common = releve.common
-        verification.specie = releve.specie
-        verification.image = releve.image
-        verification.releveId = req.body.releve._id
-        verification.osmId = releve.osmId
-        verification.username = req.session.username
-        verification.userOsmId = req.session.user
-        verification.validated = req.body.releve.validated
-        verification.date = Date.now()
-        if(!verification.validated){
-        verification.userGenus = req.body.releve.genus
-        verification.userCommon = req.body.releve.common
-        verification.userSpecie = req.body.releve.specie}
-        verification.save()
-        let verif = verification.toJSON()
-        verif.verificationValue = {
-          verification: true,
-          success: true
-        }
-        res.send({
-          success: true,
-          observation: verif
-        })
-      })
-  })
 
   app.post('/api/observation', function (req, res) {
     console.log(req.body.releve)
@@ -194,11 +171,6 @@ module.exports = function (app, logger, pusher) {
       identification: req.body.releve.identificationMode,
       success: false
     }
-    observation.verificationValue = {
-      verification: req.body.releve.verificationMode,
-      success: false
-    }
-
     observation.authorName = req.session.username
     observation.date = Date.now()
     observation.validation.push({
@@ -208,11 +180,6 @@ module.exports = function (app, logger, pusher) {
     observation.save()
     let obs = observation.toJSON()
     pusher.trigger('observation', 'new_obs', obs)
-    if (!req.body.releve.verificationMode) {
-      console.log(req.body)
-      obs.validated = true
-    }
-
     res.send({
       success: true,
       observation: obs
@@ -221,50 +188,7 @@ module.exports = function (app, logger, pusher) {
   app.get('/api/observation', function (req, res) {
     Observation.find({})
       .exec(function (err, results) {
-        for (var i = 0; i < results.length; i++) {
-          let validated = results[i].validation.find(function (value) {
-            return value && value.id == req.session.user
-          })
-          if (validated && !results[i].verificationValue.verification) {
-            results[i] = results[i].toJSON()
-            results[i].validated = true
-          } else {
-            results[i] = results[i].toJSON()
-          }
-        }
-        Identification.find()
-          .exec(function (err, identifications) {
-            for (let releve of results) {
-              for (let identification of identifications) {
-                if (releve._id == identification.releveId) {
-                  if (identification.userOsmId == req.session.user) {
-                    releve.identificationValue = {
-                      identification: true,
-                      success: true
-                    }
-                  }
-                }
-              }
-            }
-            Verification.find()
-              .exec(function (err, verifications) {
-                for (let releve of results) {
-                  for (let verification of verifications) {
-                    if (releve._id == verification.releveId) {
-                      if (verification.userOsmId == req.session.user) {
-                        // releve=releve.toJSON()
-                        releve.validated = true
-                        releve.verificationValue = {
-                          verification: true,
-                          success: true
-                        }
-                      }
-                    }
-                  }
-                }
-                res.send(results)
-              })
-          })
+        res.send(results)
         //console.log(results)
       })
   })
