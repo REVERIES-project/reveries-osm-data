@@ -2,7 +2,6 @@ module.exports = function (app, logger, pusher) {
   var Tree = require('../schema/tree')
   var Observation = require('../schema/observation')
   var Identification = require('../schema/identification')
-  var Verification = require('../schema/verification')
   var express = require('express')
   var axios = require('axios')
   app.use(express.static('../osm-vuejs/www/'))
@@ -129,12 +128,7 @@ module.exports = function (app, logger, pusher) {
         res.send(results)
       })
   })
-  app.get('/api/identification',function(req,res){
-  Identification.find()
-  .exec(function(err,response){
-    res.send(response)
-  })
-  })
+
   app.post('/api/identification', function (req, res) {
     var identification = new Identification()
     identification.coordinates = req.body.releve.coordinates
@@ -188,7 +182,29 @@ module.exports = function (app, logger, pusher) {
   app.get('/api/observation', function (req, res) {
     Observation.find({})
       .exec(function (err, results) {
-        res.send(results)
+        for (var i = 0; i < results.length; i++) {
+          let validated = results[i].validation.find(function (value) {
+            return value && value.id == req.session.user
+          })
+          results[i]=results[i].toJSON()
+        }
+        Identification.find()
+          .exec(function (err, identifications) {
+            for (let releve of results) {
+              for (let identification of identifications) {
+                if (releve._id == identification.releveId) {
+                  if (identification.userOsmId == req.session.user) {
+                    releve.identificationValue = {
+                      identification: true,
+                      success: true
+                    }
+                  }
+                }
+              }
+            }
+            res.send(results)
+
+          })
         //console.log(results)
       })
   })
