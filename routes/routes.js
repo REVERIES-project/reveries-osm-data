@@ -100,7 +100,6 @@ module.exports = function (app, logger, pusher) {
   app.post('/api/remove',function(req,res){
     Observation.findByIdAndRemove(req.body.releve._id)
     .exec(function(err,result){
-      console.log(result)
       pusher.trigger('observation', 'remove_obs', {observation:req.body.releve,userId:req.session.user})
       res.send({success:true})
     })
@@ -149,6 +148,8 @@ module.exports = function (app, logger, pusher) {
         result.height = req.body.releve.height
         result.common = req.body.releve.common
         result.specie = req.body.releve.specie
+        result.confidence=req.body.releve.confidence
+
         if (req.body.releve.image) {
           result.image = req.body.releve.image
         } else {
@@ -190,6 +191,7 @@ module.exports = function (app, logger, pusher) {
     identification.releveId = req.body.releve._id
     identification.osmId = req.body.osmId
     identification.date = Date.now()
+    identification.confidence=req.body.releve.identificationValue.confidence
     identification.userGenus = req.body.releve.identificationValue.genus
     identification.userCommon = req.body.releve.identificationValue.common
     identification.userSpecie = req.body.releve.identificationValue.specie
@@ -215,6 +217,7 @@ module.exports = function (app, logger, pusher) {
     observation.crown = req.body.releve.crown
     observation.height= req.body.releve.height
     observation.osmId = req.session.user
+    observation.confidence=req.body.releve.confidence
     observation.identificationValue = {
       identification: req.body.releve.identificationMode,
       success: false

@@ -1,6 +1,10 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
-
+const Confidence = Object.freeze({
+  confident: 'Confiant',
+  unconfident: 'Peu confiant',
+  unknown: 'Non renseignée',
+});
 const observationSchema = Schema({
     coordinates: [Number],
     
@@ -12,11 +16,11 @@ const observationSchema = Schema({
     height:String,
     noTree:[Object],
     common:String,
+    confidence:{type:String,enum:Object.values(Confidence),default:'Non renseignée'},
     authorName:String,
     modifierName:String,
     modifierId:String,
     date:Date,
-    contributor:[String ],
     validation:[Object],
     prev:[Object],
     identificationValue:Object,

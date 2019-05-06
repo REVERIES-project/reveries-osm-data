@@ -1,6 +1,11 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
-
+const Confidence = Object.freeze({
+    confident: 'Confiant',
+    unconfident: 'Peu confiant',
+    unknown: 'Non renseigné',
+  });
+  
 const identificationSchema = Schema({
     coordinates: [Number],
     
@@ -11,6 +16,7 @@ const identificationSchema = Schema({
     osmId:String,
     image:String,
     common:String,
+    confidence:{type:String,enum:Object.values(Confidence)},
     userSpecie: String,
     userGenus:String,
     username:String,
