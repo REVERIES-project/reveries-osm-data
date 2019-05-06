@@ -51,6 +51,18 @@ module.exports = function (app, logger, pusher) {
     req.session.save()
     res.send('ok')
   })
+  app.post('/api/anonymous',function(req,res){
+    req.session.user=(Math.floor(Math.random() * 1000) + 200).toString();
+    req.session.username='Anon' + req.session.user
+    req.session.save()
+    res.send({success:true,username:req.session.username,userId:req.session.user})  
+  })
+  app.post('/api/restoreSession',function(req,res){
+    req.session.user=req.body.id
+    req.session.username=req.body.username
+    req.session.save()
+    res.send({success:true})
+  })
   app.get('/api/user', function (req, res) {
     res.send(req.session)
   })
@@ -72,30 +84,69 @@ module.exports = function (app, logger, pusher) {
       .exec(function (err, observation) {
         let validation = {
           name: req.session.username,
-          id: req.session.user
+          id: req.session.user,
+          date:Date.now()
         }
         observation.validation.push(validation)
         observation.save()
-        pusher.trigger('observation', 'validate_obs', observation)
-        let obs = observation.toJSON()
-        obs.validated = true
+        pusher.trigger('observation', 'validate_obs', {observation:observation,userId:req.session.user})
         res.send({
           success: true,
-          observation: obs
+          observation: observation
         })
       })
   })
+
+  app.post('/api/remove',function(req,res){
+    Observation.findByIdAndRemove(req.body.releve._id)
+    .exec(function(err,result){
+      console.log(result)
+      pusher.trigger('observation', 'remove_obs', {observation:req.body.releve,userId:req.session.user})
+      res.send({success:true})
+    })
+  })
+  app.post('/api/noTree',function(req,res){
+    Observation.findById(req.body.releve._id)
+    .exec(function(err,result){
+      let index = result.noTree.findIndex(val=>val.osmId==req.session.user)
+      if(index==-1){
+        result.noTree.push({osmId:req.session.user,username:req.session.username,date:Date.now()})
+      }
+      pusher.trigger('observation', 'invalidate_tree', {observation:result,userId:req.session.user})
+      res.send({success:true,observation:result})
+      result.save()
+    })
+  })
+
+  app.post('/api/unsetNoTree',function(req,res){
+    Observation.findById(req.body.releve._id)
+    .exec(function(err,result){
+      let index = result.noTree.findIndex(val=>val.osmId==req.session.user)
+      if(index!=-1){
+        result.noTree.splice(index,1)
+      }
+      console.log(result.noTree)
+      pusher.trigger('observation', 'uninvalidate_tree', {observation:result,userId:req.session.user})
+      res.send({success:true,observation:result})
+      result.save()
+    })
+  })
+
   app.post('/api/modifyObservation', function (req, res) {
     Observation.findById(req.body.releve._id)
       .exec(function (err, result) {
+        //Case where suspicion of tree absence
+        // Only the noTree indicator is updated
         let prev = result.toObject()
         delete prev.coordinates
-        delete prev.contributor
+        delete prev.noTree
         if (prev.prev) {
           delete prev.prev
         }
         result.prev.push(prev)
         result.genus = req.body.releve.genus
+        result.crown = req.body.releve.crown
+        result.height = req.body.releve.height
         result.common = req.body.releve.common
         result.specie = req.body.releve.specie
         if (req.body.releve.image) {
@@ -103,21 +154,19 @@ module.exports = function (app, logger, pusher) {
         } else {
           result.image = prev.image
         }
-        result.contributor.push(req.session.user)
         result.modifierId = req.session.user
         result.modifierName = req.session.username
         result.date = Date.now()
         result.validation = [{
           name: req.session.username,
-          id: req.session.user
+          id: req.session.user,
+          date:Date.now()
         }]
-        pusher.trigger('observation', 'modify_obs', result)
+        pusher.trigger('observation', 'modify_obs', {observation:result,userId:req.session.user})
         result.save()
-        let observation = result.toJSON()
-        observation.validated = true
         res.send({
           success: true,
-          observation: observation
+          observation: result
         })
       })
   })
@@ -136,12 +185,15 @@ module.exports = function (app, logger, pusher) {
     identification.common = req.body.releve.common
     identification.specie = req.body.releve.specie
     identification.image = req.body.releve.image
+    identification.crown = req.body.releve.crown
+    identification.height = req.body.releve.height
     identification.releveId = req.body.releve._id
     identification.osmId = req.body.osmId
     identification.date = Date.now()
     identification.userGenus = req.body.releve.identificationValue.genus
     identification.userCommon = req.body.releve.identificationValue.common
     identification.userSpecie = req.body.releve.identificationValue.specie
+    identification.userImage = req.body.releve.identificationValue.image
     identification.userOsmId = req.session.user
     identification.username = req.session.username
     identification.save()
@@ -160,6 +212,8 @@ module.exports = function (app, logger, pusher) {
     observation.common = req.body.releve.common
     observation.specie = req.body.releve.specie
     observation.image = req.body.releve.image
+    observation.crown = req.body.releve.crown
+    observation.height= req.body.releve.height
     observation.osmId = req.session.user
     observation.identificationValue = {
       identification: req.body.releve.identificationMode,
@@ -172,11 +226,10 @@ module.exports = function (app, logger, pusher) {
       id: req.session.user
     })
     observation.save()
-    let obs = observation.toJSON()
-    pusher.trigger('observation', 'new_obs', obs)
+    pusher.trigger('observation', 'new_obs', {observation:observation,userId:req.session.user})
     res.send({
       success: true,
-      observation: obs
+      observation: observation
     })
   })
   app.get('/api/observation', function (req, res) {
@@ -196,7 +249,14 @@ module.exports = function (app, logger, pusher) {
                   if (identification.userOsmId == req.session.user) {
                     releve.identificationValue = {
                       identification: true,
-                      success: true
+                      success: true,
+                      userSpecie: identification.userSpecie,
+                      userGenus:identification.userGenus,
+                      userImage:identification.userImage,
+                      userCrown:identification.userCrown,
+                      userHeight:identification.userHeight,
+                      userCommon:identification.userCommon,
+                  
                     }
                   }
                 }

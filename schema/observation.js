@@ -8,16 +8,18 @@ const observationSchema = Schema({
     genus:String,
     osmId:String,
     image:String,
+    crown:String,
+    height:String,
+    noTree:[Object],
     common:String,
     authorName:String,
     modifierName:String,
     modifierId:String,
     date:Date,
-    contributor:[String],
+    contributor:[String ],
     validation:[Object],
     prev:[Object],
     identificationValue:Object,
-    verificationValue:Object,
   });
   
 
