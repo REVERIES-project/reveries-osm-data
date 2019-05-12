@@ -235,6 +235,32 @@ module.exports = function (app, logger, pusher) {
       observation: observation
     })
   })
+  app.post('/api/importFromOSM',function(req,res){
+    var observation = new Observation()
+    observation.coordinates = req.body.releve.coordinates
+    observation.image = req.body.releve.image
+    observation.source = 'OSM'
+    observation.osmNodeId= req.body.releve.nodeId
+    observation.osmId = req.session.user
+    observation.authorName = req.session.username
+    observation.identificationValue = {
+      identification: false,
+      success: false
+    }
+
+    observation.date = Date.now()
+    observation.validation.push({
+      name: req.session.username,
+      id: req.session.user
+    })
+    observation.save()
+    pusher.trigger('observation', 'new_obs', {observation:observation,userId:req.session.user})
+    res.send({
+      success: true,
+      observation: observation
+    })
+
+  })
   app.get('/api/observation', function (req, res) {
     Observation.find({})
       .exec(function (err, results) {

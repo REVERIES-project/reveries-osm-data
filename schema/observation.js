@@ -14,6 +14,8 @@ const observationSchema = Schema({
     image:String,
     crown:String,
     height:String,
+    source:{type:String,default:'Albiziapp'},
+    osmNodeId:String,
     noTree:[Object],
     common:String,
     confidence:{type:String,enum:Object.values(Confidence),default:'Non renseignée'},

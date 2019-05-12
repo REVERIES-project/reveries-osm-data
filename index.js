@@ -10,7 +10,7 @@ let PORT=process.env.PORT
 let https=require('https')
 var httpProxy = require('http-proxy');
 let sparqlClient=require('./sparql/sparql')
-var proxy = httpProxy.createProxyServer({ ws: true });
+var proxy = httpProxy.createProxyServer();
 console.log(ENV)
 var Pusher = require('pusher');
 
@@ -38,19 +38,10 @@ app.use(cors({
     credentials: true // enable set cookie
 }
 ));
-app.get('/socket.io/*', function(req, res) {
-    //console.log("proxying GET request", req.url);
-    proxy.web(req, res, { target: 'http://localhost:8081'});
-  });
-app.post('/socket.io/*', function(req, res) {
-    //console.log("proxying POST request", req.url);
-    proxy.web(req, res, { target: 'http://localhost:8081'});
-  });
-  app.post('/setupImages', function(req, res) {
+  app.post('/api/setupImages', function(req, res) {
     console.log("proxying setup Image", req.url);
-    proxy.web(req, res, { target: 'http://localhost:8081'});
+    proxy.web(req, res, { target: 'http://localhost:8081/api/setuImages'});
   });
-
   app.use(session({
     resave: true,
     saveUninitialized: true,
