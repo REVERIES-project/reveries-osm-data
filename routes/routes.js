@@ -2,6 +2,7 @@ module.exports = function (app, logger, pusher) {
   var Tree = require('../schema/tree')
   var Observation = require('../schema/observation')
   var Identification = require('../schema/identification')
+  var User = require('../schema/user')
   var express = require('express')
   var axios = require('axios')
   app.use(express.static('../osm-vuejs/www/'))
@@ -15,41 +16,23 @@ module.exports = function (app, logger, pusher) {
         res.send(response.data.elements)
       })
   })
-  app.get('/osmtest', function (req, res) {
-    axios.get('http://overpass-api.de/api/interpreter?data=[out:json];node[%22natural%22=%22tree%22](46.900246243056245,6.356577873229981,46.906667550492045,6.37007474899292);out;').then(function (response) {
-      res.send(response.data);
-      console.log(response.data)
-    })
-  })
-  app.get('/trees', function (req, res) {
-
-
-    Tree.find({
-        geometry: {
-          $near: {
-            $geometry: {
-              type: "Point",
-              coordinates: [-0.75763, 48.08498]
-            },
-            $minDistance: 1,
-            $maxDistance: 100000
-          }
-        }
-      })
-      .exec(function (err, results) {
-        var toSend = results.map(function (el) {
-          return {
-            center: [el.geometry.coordinates[1], el.geometry.coordinates[0]]
-          }
-        })
-        res.send(toSend)
-      })
-  })
   app.get('/api/login', function (req, res) {
     req.session.user = req.query.id
     req.session.username = req.query.name
     req.session.save()
-    res.send('ok')
+
+    User.findOne({id:req.query.id})
+      .exec(function(err,result){
+        if(!result){
+          let user = new User()
+          user.id=req.query.id
+          user.username=req.query.name
+          user.save()
+          res.send({success:true,user:user})
+          return      
+        }
+        res.send({success:true,user:result})
+      })
   })
   app.post('/api/anonymous',function(req,res){
     req.session.user=(Math.floor(Math.random() * 1000) + 200).toString();
@@ -80,6 +63,11 @@ module.exports = function (app, logger, pusher) {
   });
 
   app.post('/api/validate', function (req, res) {
+    if(!req.session.user){
+      res.send({success:false,details:'Not authenticated'})
+      return
+    }
+
     Observation.findById(req.body.releve._id)
       .exec(function (err, observation) {
         let validation = {
@@ -98,6 +86,11 @@ module.exports = function (app, logger, pusher) {
   })
 
   app.post('/api/remove',function(req,res){
+    if(!req.session.user){
+      res.send({success:false,details:'Not authenticated'})
+      return
+    }
+
     Observation.findByIdAndRemove(req.body.releve._id)
     .exec(function(err,result){
       pusher.trigger('observation', 'remove_obs', {observation:req.body.releve,userId:req.session.user})
@@ -105,6 +98,11 @@ module.exports = function (app, logger, pusher) {
     })
   })
   app.post('/api/noTree',function(req,res){
+    if(!req.session.user){
+      res.send({success:false,details:'Not authenticated'})
+      return
+    }
+
     Observation.findById(req.body.releve._id)
     .exec(function(err,result){
       let index = result.noTree.findIndex(val=>val.osmId==req.session.user)
@@ -118,6 +116,11 @@ module.exports = function (app, logger, pusher) {
   })
 
   app.post('/api/unsetNoTree',function(req,res){
+    if(!req.session.user){
+      res.send({success:false,details:'Not authenticated'})
+      return
+    }
+
     Observation.findById(req.body.releve._id)
     .exec(function(err,result){
       let index = result.noTree.findIndex(val=>val.osmId==req.session.user)
@@ -130,8 +133,15 @@ module.exports = function (app, logger, pusher) {
       result.save()
     })
   })
+  app.post('/api/setUserProperty',function(req,res){
 
+  })
   app.post('/api/modifyObservation', function (req, res) {
+    if(!req.session.user){
+      res.send({success:false,details:'Not authenticated'})
+      return
+    }
+
     Observation.findById(req.body.releve._id)
       .exec(function (err, result) {
         //Case where suspicion of tree absence
@@ -144,8 +154,6 @@ module.exports = function (app, logger, pusher) {
         }
         result.prev.push(prev)
         result.genus = req.body.releve.genus
-        result.crown = req.body.releve.crown
-        result.height = req.body.releve.height
         result.common = req.body.releve.common
         result.specie = req.body.releve.specie
         result.confidence=req.body.releve.confidence
@@ -179,6 +187,21 @@ module.exports = function (app, logger, pusher) {
       })
   })
 
+  app.post('/api/backup',function(req,res){
+    let id=req.session.user
+    if(!id){
+      res.send({success:false,details:'noUser'})
+      return
+    }
+    User.findOne({id:req.session.user})
+    .exec(function(err,user){
+      let prop=req.body.field
+      let value=req.body.value
+      user[prop]=value
+      user.save()
+      res.send({success:true})
+    })
+  })
   app.post('/api/identification', function (req, res) {
     var identification = new Identification()
     identification.coordinates = req.body.releve.coordinates
@@ -186,8 +209,6 @@ module.exports = function (app, logger, pusher) {
     identification.common = req.body.releve.common
     identification.specie = req.body.releve.specie
     identification.image = req.body.releve.image
-    identification.crown = req.body.releve.crown
-    identification.height = req.body.releve.height
     identification.releveId = req.body.releve._id
     identification.osmId = req.body.osmId
     identification.date = Date.now()
@@ -207,7 +228,10 @@ module.exports = function (app, logger, pusher) {
 
 
   app.post('/api/observation', function (req, res) {
-    console.log(req.body.releve)
+    if(!req.session.user){
+      res.send({success:false,details:'Not authenticated'})
+      return
+    }
     var observation = new Observation()
     observation.coordinates = req.body.releve.coordinates
     observation.genus = req.body.releve.genus
@@ -226,7 +250,8 @@ module.exports = function (app, logger, pusher) {
     observation.date = Date.now()
     observation.validation.push({
       name: req.session.username,
-      id: req.session.user
+      id: req.session.user,
+      date:Date.now()
     })
     observation.save()
     pusher.trigger('observation', 'new_obs', {observation:observation,userId:req.session.user})
@@ -236,6 +261,11 @@ module.exports = function (app, logger, pusher) {
     })
   })
   app.post('/api/importFromOSM',function(req,res){
+    if(!req.session.user){
+      res.send({success:false,details:'Not authenticated'})
+      return
+    }
+
     var observation = new Observation()
     observation.coordinates = req.body.releve.coordinates
     observation.image = req.body.releve.image
@@ -251,7 +281,8 @@ module.exports = function (app, logger, pusher) {
     observation.date = Date.now()
     observation.validation.push({
       name: req.session.username,
-      id: req.session.user
+      id: req.session.user,
+      date:Date.now()
     })
     observation.save()
     pusher.trigger('observation', 'new_obs', {observation:observation,userId:req.session.user})
@@ -282,8 +313,6 @@ module.exports = function (app, logger, pusher) {
                       userSpecie: identification.userSpecie,
                       userGenus:identification.userGenus,
                       userImage:identification.userImage,
-                      userCrown:identification.userCrown,
-                      userHeight:identification.userHeight,
                       userCommon:identification.userCommon,
                   
                     }
