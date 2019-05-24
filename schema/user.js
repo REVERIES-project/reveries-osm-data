@@ -5,8 +5,8 @@ const userSchema=Schema({
     username:String,
     id:String,
     trophies: Array,
-    journal: Array,
-    score: Number,
+    explorationHistory: Array,
+    explorationScore: Number,
     knowledgeScore:Number,
     knowledgeHistory:Array,
     gamificationMode: Boolean,
@@ -16,7 +16,13 @@ const userSchema=Schema({
     activite: Object,
     indexActivite: Number,
     completion: Number,
-    goal: Number
+    goal: Number,
+    activities:[],
+    status:[],
+    actionsTransActivite:Map,
+    time:Object,
+    commonData_verification:{type:Boolean,default:false},
+    commonData_identification:{type:Boolean,default:false}
 
 })
 

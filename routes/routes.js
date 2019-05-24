@@ -1,6 +1,6 @@
 module.exports = function (app, logger, pusher) {
-  var Tree = require('../schema/tree')
   var Observation = require('../schema/observation')
+  var _ =require('lodash')
   var Identification = require('../schema/identification')
   var User = require('../schema/user')
   var express = require('express')
@@ -186,7 +186,31 @@ module.exports = function (app, logger, pusher) {
         res.send(results)
       })
   })
-
+  app.post('/api/resetBackup'
+    ,function(req,res){
+      let id=req.session.user
+      if(!id){
+        res.send({success:false,details:'noUser'})
+        return
+      }
+      User.findOne({id:req.session.user})
+      .exec(function(err,user){
+        if(!user)
+        {
+          res.send('no user')
+          return
+        }
+        let key=_.without(_.keys(user.toObject()),'_id','id','__v','username')
+        console.log(key)
+        for(let k of key){
+          user[k]=null
+        }
+        user.save()
+        res.send({success:true})
+      })
+  
+    }
+  )
   app.post('/api/backup',function(req,res){
     let id=req.session.user
     if(!id){
@@ -195,10 +219,17 @@ module.exports = function (app, logger, pusher) {
     }
     User.findOne({id:req.session.user})
     .exec(function(err,user){
+      if(!user)
+      {
+        res.send('no user')
+        return
+      }
       let prop=req.body.field
       let value=req.body.value
       user[prop]=value
-      user.save()
+      user.save(function(err){
+        console.log(err)
+      })
       res.send({success:true})
     })
   })
@@ -226,6 +257,34 @@ module.exports = function (app, logger, pusher) {
 
   })
 
+  app.get('/api/cleanObservations',function(req,res){
+    let incorrect=[]
+    Observation.find({})
+    .exec(function(err,result){
+      for(let obs of result){
+        if(!obs.validation){
+          obs.validation=[]
+          incorrect.push(obs)
+        }
+        if(obs.validation.includes(null)){
+          obs.validation=[]
+          incorrect.push(obs)
+        }
+        for(let hist of obs.prev){
+          if(!hist.validation){
+            hist.validation=[]
+            incorrect.push(hist)
+          }
+          if(hist.validation.includes(null)){
+            hist.validation=[]
+            incorrect.push(hist)
+          }
+        }
+      obs.save()
+      }
+      res.send({problems:incorrect})
+    })
+  })
 
   app.post('/api/observation', function (req, res) {
     if(!req.session.user){

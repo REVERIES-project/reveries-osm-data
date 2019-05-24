@@ -40,7 +40,17 @@ app.use(cors({
 ));
   app.post('/api/setupImages', function(req, res) {
     console.log("proxying setup Image", req.url);
-    proxy.web(req, res, { target: 'http://localhost:8081/api/setuImages'});
+    proxy.web(req, res, { target: 'http://localhost:8081/api/setupImages'})
+    proxy.once('proxyReq', (proxyReq, req) => {
+      if (req.body && req.complete) {
+        const bodyData = JSON.stringify(req.body);
+        proxyReq.setHeader('Content-Type', 'application/json');
+        proxyReq.setHeader('Content-Length', Buffer.byteLength(bodyData));
+        proxyReq.write(bodyData);
+      }
+    });
+     
+  
   });
   app.use(session({
     resave: true,
@@ -72,7 +82,7 @@ database.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
 // Create  new MongoClient
 require('./routes/routes')(app,logger,pusher)
-require('./routes/keyRoute')(app,sparqlClient)
+require('./routes/logRoute')(app)
 if (ENV === "production") {
 	var secureServer = https.createServer({
 			key: fs.readFileSync('/etc/letsencrypt/live/albiziapp.reveries-project.fr/privkey.pem'),

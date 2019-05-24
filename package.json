@@ -19,6 +19,7 @@
     "http-proxy": "^1.17.0",
     "http-proxy-middleware": "^0.19.1",
     "https": "^1.0.0",
+    "lodash": "^4.17.11",
     "mongodb": "^3.1.9",
     "mongoose": "^5.3.15",
     "pusher": "^2.2.0",
