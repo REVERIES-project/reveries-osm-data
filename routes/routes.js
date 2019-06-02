@@ -319,6 +319,40 @@ module.exports = function (app, logger, pusher) {
       observation: observation
     })
   })
+  app.post('/api/observationAnon', function (req, res) {
+    if(!req.session.user){
+      res.send({success:false,details:'Not authenticated'})
+      return
+    }
+    var observation = new Observation()
+    observation.coordinates = req.body.releve.coordinates
+    observation.genus = req.body.releve.genus
+    observation.common = req.body.releve.common
+    observation.specie = req.body.releve.specie
+    observation.image = req.body.releve.image
+    observation.crown = req.body.releve.crown
+    observation.height= req.body.releve.height
+    observation.osmId = (Math.floor(Math.random() * 1000) + 200).toString()
+    observation.confidence=req.body.releve.confidence
+    observation.identificationValue = {
+      identification: req.body.releve.identificationMode,
+      success: false
+    }
+    observation.authorName = 'Anon' + observation.osmId
+    observation.date = Date.now()
+    observation.validation.push({
+      name: 'Anon' + observation.osmId,
+      id: observation.osmId,
+      date:Date.now()
+    })
+    observation.save()
+    pusher.trigger('observation', 'new_obs', {observation:observation,userId:observation.osmId})
+    res.send({
+      success: true,
+      observation: observation
+    })
+  })
+
   app.post('/api/importFromOSM',function(req,res){
     if(!req.session.user){
       res.send({success:false,details:'Not authenticated'})
