@@ -34,18 +34,6 @@ module.exports = function (app, logger, pusher) {
         res.send({success:true,user:result})
       })
   })
-  app.post('/api/anonymous',function(req,res){
-    req.session.user=(Math.floor(Math.random() * 1000) + 200).toString();
-    req.session.username='Anon' + req.session.user
-    req.session.save()
-    res.send({success:true,username:req.session.username,userId:req.session.user})  
-  })
-  app.post('/api/restoreSession',function(req,res){
-    req.session.user=req.body.id
-    req.session.username=req.body.username
-    req.session.save()
-    res.send({success:true})
-  })
   app.get('/api/user', function (req, res) {
     res.send(req.session)
   })
@@ -132,9 +120,6 @@ module.exports = function (app, logger, pusher) {
       res.send({success:true,observation:result})
       result.save()
     })
-  })
-  app.post('/api/setUserProperty',function(req,res){
-
   })
   app.post('/api/modifyObservation', function (req, res) {
     if(!req.session.user){
@@ -286,6 +271,7 @@ module.exports = function (app, logger, pusher) {
     })
   })
 
+
   app.post('/api/observation', function (req, res) {
     if(!req.session.user){
       res.send({success:false,details:'Not authenticated'})
@@ -319,6 +305,7 @@ module.exports = function (app, logger, pusher) {
       observation: observation
     })
   })
+
   app.post('/api/observationAnon', function (req, res) {
     if(!req.session.user){
       res.send({success:false,details:'Not authenticated'})
@@ -332,7 +319,7 @@ module.exports = function (app, logger, pusher) {
     observation.image = req.body.releve.image
     observation.crown = req.body.releve.crown
     observation.height= req.body.releve.height
-    observation.osmId = (Math.floor(Math.random() * 1000) + 200).toString()
+    observation.osmId = req.session.user.split().reverse().join()
     observation.confidence=req.body.releve.confidence
     observation.identificationValue = {
       identification: req.body.releve.identificationMode,
