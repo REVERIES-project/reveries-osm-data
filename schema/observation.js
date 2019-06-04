@@ -5,9 +5,10 @@ const Confidence = Object.freeze({
   unconfident: 'Peu confiant',
   unknown: 'Non renseignée',
 });
+
+
+
 const observationSchema = Schema({
-    coordinates: [Number],
-    
     specie: String,
     genus:String,
     osmId:String,
@@ -26,6 +27,17 @@ const observationSchema = Schema({
     validation:[Object],
     prev:[Object],
     identificationValue:Object,
+    location : {
+      type: {
+        type: String,
+        default: 'Point',
+        required: true
+      },
+      coordinates: {
+        type: [Number],
+        required: true
+      }
+    }
   });
   
 

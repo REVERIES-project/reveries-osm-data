@@ -132,7 +132,7 @@ module.exports = function (app, logger, pusher) {
         //Case where suspicion of tree absence
         // Only the noTree indicator is updated
         let prev = result.toObject()
-        delete prev.coordinates
+        delete prev.location
         delete prev.noTree
         if (prev.prev) {
           delete prev.prev
@@ -220,7 +220,7 @@ module.exports = function (app, logger, pusher) {
   })
   app.post('/api/identification', function (req, res) {
     var identification = new Identification()
-    identification.coordinates = req.body.releve.coordinates
+    identification.location.coordinates = req.body.releve.coordinates
     identification.genus = req.body.releve.genus
     identification.common = req.body.releve.common
     identification.specie = req.body.releve.specie
@@ -278,7 +278,7 @@ module.exports = function (app, logger, pusher) {
       return
     }
     var observation = new Observation()
-    observation.coordinates = req.body.releve.coordinates
+    observation.location.coordinates = req.body.releve.coordinates
     observation.genus = req.body.releve.genus
     observation.common = req.body.releve.common
     observation.specie = req.body.releve.specie
@@ -312,14 +312,14 @@ module.exports = function (app, logger, pusher) {
       return
     }
     var observation = new Observation()
-    observation.coordinates = req.body.releve.coordinates
+    observation.location.coordinates = req.body.releve.coordinates
     observation.genus = req.body.releve.genus
     observation.common = req.body.releve.common
     observation.specie = req.body.releve.specie
     observation.image = req.body.releve.image
     observation.crown = req.body.releve.crown
     observation.height= req.body.releve.height
-    observation.osmId = req.session.user.split().reverse().join()
+    observation.osmId = req.session.user.split("").reverse().join("")
     observation.confidence=req.body.releve.confidence
     observation.identificationValue = {
       identification: req.body.releve.identificationMode,
@@ -347,7 +347,7 @@ module.exports = function (app, logger, pusher) {
     }
 
     var observation = new Observation()
-    observation.coordinates = req.body.releve.coordinates
+    observation.location.coordinates = req.body.releve.coordinates
     observation.image = req.body.releve.image
     observation.source = 'OSM'
     observation.osmNodeId= req.body.releve.nodeId
