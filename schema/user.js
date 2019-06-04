@@ -19,6 +19,7 @@ const userSchema=Schema({
     goal: Number,
     activities:[],
     status:[],
+    scores:[],
     actionsTransActivite:Map,
     time:Object,
     commonData_verification:{type:Boolean,default:false},
