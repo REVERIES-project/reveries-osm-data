@@ -11,7 +11,7 @@ module.exports = function (app, logger, pusher) {
     let west = req.query.west
     let north = req.query.north
     let east = req.query.east
-    axios.get('https://lz4.overpass-api.de/api/interpreter?data=[out:json];node["natural"="tree"](' + south + ',' + west + ',' + north + ',' + east + ');out meta;')
+    axios.get('http://overpass-api.de/api/interpreter?data=[out:json];node["natural"="tree"](' + south + ',' + west + ',' + north + ',' + east + ');out meta;')
       .then(function (response) {
         res.send(response.data.elements)
       })
