@@ -7,6 +7,7 @@ module.exports = function (app, logger, pusher) {
   var User = require('../schema/user')
   var express = require('express')
   var axios = require('axios')
+  var request=require('request')
   app.use(express.static('../osm-vuejs/www/'))
   
   app.get('/api/getOsmData',function(req,res){
@@ -14,10 +15,10 @@ module.exports = function (app, logger, pusher) {
     let left = req.query.west
     let top = req.query.north
     let right = req.query.east
-    axios.get('https://api.openstreetmap.org/api/0.6/map?bbox='+left+','+bottom+','+right+','+top)
-      .then(function(response){
-        console.log(typeof response.data)
-          var doc = new DOMParser().parseFromString(response.data)   
+    request.get('https://api.openstreetmap.org/api/0.6/map?bbox='+left+','+bottom+','+right+','+top,
+      function(err,httpresponse,body){
+        console.log(body)
+          var doc = new DOMParser().parseFromString(body)   
                  console.log(doc)
           let resultJson=osmtogeojson(doc)
           let nodes=[]
