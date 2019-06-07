@@ -32,16 +32,6 @@ module.exports = function (app, logger, pusher) {
       
       })
   })
-  app.get('/api/osmdata', function (req, res) {
-    let south = req.query.south
-    let west = req.query.west
-    let north = req.query.north
-    let east = req.query.east
-    axios.get('http://overpass.kumi.systems/api/interpreter?data=[out:json];node["natural"="tree"](' + south + ',' + west + ',' + north + ',' + east + ');out meta;')
-      .then(function (response) {
-        res.send(response.data.elements)
-      })
-  })
   app.get('/api/login', function (req, res) {
     req.session.user = req.query.id
     req.session.username = req.query.name
