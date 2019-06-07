@@ -11,7 +11,7 @@ module.exports = function (app, logger, pusher) {
     let west = req.query.west
     let north = req.query.north
     let east = req.query.east
-    axios.get('http://overpass-api.de/api/interpreter?data=[out:json];node["natural"="tree"](' + south + ',' + west + ',' + north + ',' + east + ');out;')
+    axios.get('https://lz4.overpass-api.de/api/interpreter?data=[out:json];node["natural"="tree"](' + south + ',' + west + ',' + north + ',' + east + ');out meta;')
       .then(function (response) {
         res.send(response.data.elements)
       })
@@ -347,11 +347,12 @@ module.exports = function (app, logger, pusher) {
     }
 
     var observation = new Observation()
-    observation.location.coordinates = req.body.releve.coordinates
+    observation.location.coordinates = [req.body.releve.lon,req.body.releve.lat]
     observation.image = req.body.releve.image
     observation.source = 'OSM'
-    observation.osmNodeId= req.body.releve.nodeId
+    observation.nodeId= req.body.releve.nodeId
     observation.osmId = req.session.user
+    observation.version=req.body.releve.version
     observation.authorName = req.session.username
     observation.identificationValue = {
       identification: false,
