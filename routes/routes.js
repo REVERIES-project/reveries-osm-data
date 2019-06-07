@@ -2,16 +2,41 @@ module.exports = function (app, logger, pusher) {
   var Observation = require('../schema/observation')
   var _ =require('lodash')
   var Identification = require('../schema/identification')
+  var osmtogeojson=require('osmtogeojson')
+  var DOMParser = require('xmldom').DOMParser;
   var User = require('../schema/user')
   var express = require('express')
   var axios = require('axios')
   app.use(express.static('../osm-vuejs/www/'))
+  
+  app.get('/api/getOsmData',function(req,res){
+    let bottom = req.query.south
+    let left = req.query.west
+    let top = req.query.north
+    let right = req.query.east
+    axios.get('https://api.openstreetmap.org/api/0.6/map?bbox='+left+','+bottom+','+right+','+top)
+      .then(function(response){
+        console.log(typeof response.data)
+          var doc = new DOMParser().parseFromString(response.data)   
+                 console.log(doc)
+          let resultJson=osmtogeojson(doc)
+          let nodes=[]
+          for(let node of resultJson.features){
+            console.log(node)
+            if(node.properties.natural && node.properties.natural=="tree"){
+              nodes.push(node)
+            }
+          }
+          res.send(nodes)
+      
+      })
+  })
   app.get('/api/osmdata', function (req, res) {
     let south = req.query.south
     let west = req.query.west
     let north = req.query.north
     let east = req.query.east
-    axios.get('http://lz4.overpass-api.de/api/interpreter?data=[out:json];node["natural"="tree"](' + south + ',' + west + ',' + north + ',' + east + ');out meta;')
+    axios.get('http://overpass.kumi.systems/api/interpreter?data=[out:json];node["natural"="tree"](' + south + ',' + west + ',' + north + ',' + east + ');out meta;')
       .then(function (response) {
         res.send(response.data.elements)
       })
@@ -347,7 +372,7 @@ module.exports = function (app, logger, pusher) {
     }
 
     var observation = new Observation()
-    observation.location.coordinates = [req.body.releve.lon,req.body.releve.lat]
+    observation.location.coordinates = req.body.releve.coordinates
     observation.image = req.body.releve.image
     observation.source = 'OSM'
     observation.nodeId= req.body.releve.nodeId
