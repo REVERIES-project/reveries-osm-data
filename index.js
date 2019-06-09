@@ -11,6 +11,8 @@ let https=require('https')
 var httpProxy = require('http-proxy');
 let sparqlClient=require('./sparql/sparql')
 var proxy = httpProxy.createProxyServer();
+const busboyBodyParser = require('busboy-body-parser');
+
 console.log(ENV)
 var Pusher = require('pusher');
 
@@ -38,6 +40,8 @@ app.use(cors({
     credentials: true // enable set cookie
 }
 ));
+app.use(busboyBodyParser());
+
   app.post('/api/setupImages', function(req, res) {
     console.log("proxying setup Image", req.url);
     proxy.web(req, res, { target: 'http://localhost:8081/api/setupImages'})
@@ -83,6 +87,7 @@ database.on('error', console.error.bind(console, 'MongoDB connection error:'));
 // Create  new MongoClient
 require('./routes/routes')(app,logger,pusher)
 require('./routes/logRoute')(app)
+require('./routes/missionRoute')(app,pusher)
 if (ENV === "production") {
 	var secureServer = https.createServer({
 			key: fs.readFileSync('/etc/letsencrypt/live/albiziapp.reveries-project.fr/privkey.pem'),

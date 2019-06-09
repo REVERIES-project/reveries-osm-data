@@ -15,6 +15,7 @@ const userSchema=Schema({
     mission: Object,
     activite: Object,
     indexActivite: Number,
+    lostProgression:Number,
     completion: Number,
     goal: Number,
     activities:Array,
