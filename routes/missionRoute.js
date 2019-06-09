@@ -19,7 +19,7 @@ module.exports = function (app,pusher) {
         }
         pusher.trigger('observation', 'progression_lost',{valid:true})
 
-        fs.writeFile('../osm-vuejs/static/mission/mission.json', mission)
+        fs.writeFileSync('../osm-vuejs/static/mission/mission.json', mission)
         User.find()
             .exec(function (err, users) {
                 for (let user of users) {
