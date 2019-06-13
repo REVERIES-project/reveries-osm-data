@@ -35,7 +35,7 @@ var logger = Winston.createLogger({
 // creating express server
 let app = Express()
 app.use(cors({
-    origin:['http://localhost:8000','http://localhost:3000','http://albiziapp.reveries-project.fr','https://albiziapp.reveries-project.fr'],
+    origin:['http://localhost:8080','http://localhost:3000','http://albiziapp.reveries-project.fr','https://albiziapp.reveries-project.fr'],
     methods:['GET','POST'],
     credentials: true // enable set cookie
 }

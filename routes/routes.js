@@ -8,7 +8,9 @@ module.exports = function (app, logger, pusher) {
   var express = require('express')
   var axios = require('axios')
   var request=require('request')
-  app.use(express.static('../osm-vuejs/www/'))
+  var expressStaticGzip = require("express-static-gzip");
+
+  app.use("/", expressStaticGzip("/home/reveries/albiziapp/dist/"));
   
   app.get('/api/getOsmData',function(req,res){
     let bottom = req.query.south
