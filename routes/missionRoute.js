@@ -38,6 +38,7 @@ module.exports = function (app,pusher) {
 
         fs.copyFile('./missions/mission.bak', './missions/mission.json', function (err) {
             if (err) {
+                console.log(err)
                 res.status(500).send(err)
                 return
             }

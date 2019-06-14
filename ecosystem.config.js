@@ -10,7 +10,7 @@ module.exports = {
       name      : 'osm-app',
       script    : 'index.js',
       watch:true,
-      ignore_watch : ["./node_modules", "./logs"],
+      ignore_watch : ["./node_modules", "./logs","./missions"],
       env: {
         NODE_ENV: 'development',
         PORT:8000
