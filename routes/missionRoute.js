@@ -3,7 +3,7 @@ module.exports = function (app,pusher) {
     var User = require('../schema/user')
     var _ = require('lodash')
     app.get('/api/mission',function(req,res){
-       let f= fs.readFileSync('../osm-vuejs/static/mission/mission.json')
+       let f= fs.readFileSync('./missions/mission.json')
        let missionStr=JSON.parse(f.toString())
        res.set('Content-Type', 'application/json')
        res.send(missionStr)
@@ -19,7 +19,7 @@ module.exports = function (app,pusher) {
         }
         pusher.trigger('observation', 'progression_lost',{valid:true})
 
-        fs.writeFileSync('../osm-vuejs/static/mission/mission.json', mission)
+        fs.writeFileSync('./missions/mission.json', mission)
         User.find()
             .exec(function (err, users) {
                 for (let user of users) {
@@ -36,7 +36,7 @@ module.exports = function (app,pusher) {
     app.post('/api/restoreMission', function (req, res) {
         pusher.trigger('observation', 'progression_lost',{valid:true})
 
-        fs.copyFile('../osm-vuejs/static/mission/mission.bak', '../osm-vuejs/static/mission/mission.json', function (err) {
+        fs.copyFile('./missions/mission.bak', './missions/mission.json', function (err) {
             if (err) {
                 res.status(500).send(err)
                 return
