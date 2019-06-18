@@ -44,7 +44,7 @@ app.use(busboyBodyParser());
 
   app.post('/api/setupImages', function(req, res) {
     console.log("proxying setup Image", req.url);
-    proxy.web(req, res, { target: 'http://localhost:8081/api/setupImages'})
+    proxy.web(req, res, { target: 'http://localhost:8081/'})
     proxy.once('proxyReq', (proxyReq, req) => {
       if (req.body && req.complete) {
         const bodyData = JSON.stringify(req.body);
