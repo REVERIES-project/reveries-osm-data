@@ -348,7 +348,7 @@
         },
         {  
             "type":"INVENTORY",
-            "object":"NONE",
+            "option":"NONE",
             "instruction":{  
                 "long":"Faites un maximum de relevé en un temps limite",
                 "short":"Faites relevés"
