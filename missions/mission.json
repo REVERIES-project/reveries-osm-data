@@ -139,7 +139,7 @@
                     "MRequiredScoreList":[  
                         {  
                             "name":"explorationPoints",
-                            "nbPoint":64
+                            "nbPoint":54
                         },
                         {  
                             "name":"knowledgePoints",

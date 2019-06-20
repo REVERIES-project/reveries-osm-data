@@ -5,31 +5,31 @@
                 {  
                     "name":"explorationPoints",
                     "icon":"",
-                    "displayName":"Points d'exploration",
+                    "displayName":"Exploration points",
                     "actions":[  
                         {  
                             "code":"gps",
-                            "text":"Faire un relevé",
+                            "text":"Record a tree",
                             "nbPoint":1
                         },
                         {  
                             "code":"photograph",
-                            "text":"Photographier un arbre",
+                            "text":"Photography a tree",
                             "nbPoint":2
                         },
                         {  
                             "code":"completeGenus",
-                            "text":"Compléter le champ 'genre' d'un relevé",
+                            "text":"Complete the field 'genus' in a record",
                             "nbPoint":3
                         },
                         {  
                             "code":"completeSpecie",
-                            "text":"Compléter le champ 'espèce' d'un relevé",
+                            "text":"Complete the field 'species' in a record",
                             "nbPoint":6
                         },
                         {  
                             "code":"completeCommon",
-                            "text":"Compléter le champ 'nom commun' d'un relevé",
+                            "text":"Complete the field 'common' in a record",
                             "nbPoint":6
                         }
                     ]
@@ -37,66 +37,66 @@
                 {  
                     "name":"knowledgePoints",
                     "icon":"",
-                    "displayName":"Points de connaissance",
+                    "displayName":"Knowledge points",
                     "actions":[  
                         {  
                             "code":"question",
-                            "text":"Déclarer un arbre douteux",
+                            "text":"Declare a tree presence dubious",
                             "nbPoint":1
                         },
                         {  
                             "code":"useFolia",
-                            "text":"Utiliser Folia",
+                            "text":"Use Folia",
                             "nbPoint":2
                         },
                         {  
                             "code":"sameGenusPropagation",
-                            "text":"Validation d'un de vos relevés avec le même genre",
+                            "text":"Validation by another user of one of your records genus",
                             "nbPoint":2
                         },
                         {  
                             "code":"sameSpeciePropagation",
-                            "text":"Validation d'un de vos relevés avec la même espèce",
+                            "text":"Validation by another user of one of your records species",
                             "nbPoint":4
                         },
                         {  
                             "code":"sameCommonPropagation",
-                            "text":"Validation d'un de vos relevés avec le même nom commun",
+                            "text":"Validation by another user of one of your records common name",
                             "nbPoint":4
                         },
                         {  
                             "code":"identifiedGenus",
-                            "text":"Genre correctement identifié",
+                            "text":"Genus correctly identified",
                             "nbPoint":10
                         },
                         {  
                             "code":"identifiedSpecie",
-                            "text":"Espèce correctement identifiée",
+                            "text":"Species correctly identified",
                             "nbPoint":15
                         },
                         {  
                             "code":"identifiedCommon",
-                            "text":"Nom commun correctement identifié",
+                            "text":"Common name correctly identified",
                             "nbPoint":15
                         },
                         {  
                             "code":"modifyGenus",
-                            "text":"Modifier le champ 'genre' d'un relevé",
+                            "text":"Modify the field 'genus' of a record",
                             "nbPoint":0
                         },
                         {  
                             "code":"modifySpecie",
-                            "text":"Modifier le champ 'espèce' d'un relevé",
+                            "text":"Modify the field 'species' of a record",
                             "nbPoint":0
                         },
                         {  
                             "code":"modifyCommon",
-                            "text":"Modifier le champ 'nom commun' d'un relevé",
+                            "text":"Modify the field 'common' of a record",
                             "nbPoint":0
                         },
                         {  
                             "code":"validate",
-                            "text":"Valider un relevé",
+                            "text":"Validate a record",
                             "nbPoint":0
                         }
                     ]
@@ -106,27 +106,27 @@
         {  
             "MTrophyList":[  
                 {  
-                    "title":"1 activité, c’est un bon début",
+                    "title":"1 activity, it's a good start",
                     "image":"trophee4.jpg",
                     "nbSuccessfulActivities":1
                 },
                 {  
-                    "title":"C’est mieux à 2",
+                    "title":"Better 2 than 1",
                     "image":"trophee4.jpg",  
                     "nbSuccessfulActivities":2
                 },
                 {  
-                    "title":"Jamais 2 sans 3",
+                    "title":"Never 2 without 3",
                     "image":"trophee4.jpg",
                     "nbSuccessfulActivities":3
                 },
                 {  
-                    "title":"Les 4 activités de l'apocalypse",
+                    "title":"The 4 activities of apocalypse",
                     "image":"trophee4.jpg",
                     "nbSuccessfulActivities":4
                 },
                 {  
-                    "title":"Une mission qui se déroule sans accroc",
+                    "title":"A mission without problem",
                     "image":"trophee4.jpg",
                     "nbSuccessfulActivities":5
                 }
@@ -135,7 +135,7 @@
         {  
             "MStatusList":[  
                 {  
-                    "name":"Voyageur",
+                    "name":"Traveler",
                     "MRequiredScoreList":[  
                         {  
                             "name":"explorationPoints",
@@ -148,7 +148,7 @@
                     ]
                 },
                 {  
-                    "name":"Voyageur confirmé",
+                    "name":"Experimented traveler",
                     "MRequiredScoreList":[  
                         {  
                             "name":"explorationPoints",
@@ -161,7 +161,7 @@
                     ]
                 },
                 {  
-                    "name":"Voyageur expérimenté",
+                    "name":"Experimented traveler",
                     "MRequiredScoreList":[  
                         {  
                             "name":"explorationPoints",
@@ -174,7 +174,7 @@
                     ]
                 },
                 {  
-                    "name":"Curieux des bois",
+                    "name":"Tree curious",
                     "MRequiredScoreList":[  
                         {  
                             "name":"explorationPoints",
@@ -187,7 +187,7 @@
                     ]
                 },
                 {  
-                    "name":"Explorateur de la forêt",
+                    "name":"Forest explorer",
                     "MRequiredScoreList":[  
                         {  
                             "name":"explorationPoints",
@@ -200,7 +200,7 @@
                     ]
                 },
                 {  
-                    "name":"Routard des étendues forestières",
+                    "name":"Hitchiker guide to the forest",
                     "MRequiredScoreList":[  
                         {  
                             "name":"explorationPoints",
@@ -213,7 +213,7 @@
                     ]
                 },
                 {  
-                    "name":"Observateur attenboisé",
+                    "name":"Knight of the woods",
                     "MRequiredScoreList":[  
                         {  
                             "name":"explorationPoints",
@@ -226,7 +226,7 @@
                     ]
                 },
                 {  
-                    "name":"Explorateur-botaniste aguerri",
+                    "name":"Super knight of the woods",
                     "MRequiredScoreList":[  
                         {  
                             "name":"explorationPoints",
@@ -239,7 +239,7 @@
                     ]
                 },
                 {  
-                    "name":"Maître explorateur botaniste",
+                    "name":"Master of woods knight",
                     "MRequiredScoreList":[  
                         {  
                             "name":"explorationPoints",
@@ -248,48 +248,10 @@
                         {  
                             "name":"knowledgePoints",
                             "nbPoint":140
-                        }
-                    ]
-                },
-                {  
-                    "name":"Oeil d'aigle des arbres",
-                    "MRequiredScoreList":[  
-                        {  
-                            "name":"explorationPoints",
-                            "nbPoint":54
-                        },
-                        {  
-                            "name":"knowledgePoints",
-                            "nbPoint":210
-                        }
-                    ]
-                },
-                {  
-                    "name":"Archéologue botaniste",
-                    "MRequiredScoreList":[  
-                        {  
-                            "name":"explorationPoints",
-                            "nbPoint":108
-                        },
-                        {  
-                            "name":"knowledgePoints",
-                            "nbPoint":210
-                        }
-                    ]
-                },
-                {  
-                    "name":"Voyageur",
-                    "MRequiredScoreList":[  
-                        {  
-                            "name":"explorationPoints",
-                            "nbPoint":62
-                        },
-                        {  
-                            "name":"knowledgePoints",
-                            "nbPoint":210
                         }
                     ]
                 }
+                
             ]
         }
     ],
@@ -298,8 +260,8 @@
             "type":"INVENTORY",
             "option":"NONE",
             "instruction":{  
-                "long":"Faites 5 relevés",
-                "short":"Faites relevés"
+                "long":"Record 5 trees",
+                "short":"Record trees"
             },
             "endCondition":[  
                 {  
@@ -311,8 +273,8 @@
             "type":"INVENTORY",
             "option":"DIFFERENTGENUS",
             "instruction":{  
-                "long":"Faites 3 relevés de genres différents",
-                "short":"Faites relevés genres différents"
+                "long":"Record 3 trees of distinct genus",
+                "short":"Record distinct genus"
             },
             "endCondition":[  
                 {  
@@ -324,8 +286,8 @@
             "type":"VERIFY",
             "option":"NONE",
             "instruction":{  
-                "long":"Vérifiez 3 relevés d'un autre utilisateur (cercle vert clignotant)",
-                "short":"Vérifiez relevés"
+                "long":"Verify 3 records of another user (green pulsating circles)",
+                "short":"Verify records"
             },
             "endCondition":[  
                 {  
@@ -337,8 +299,8 @@
             "type":"IDENTIFY",
             "option":"NONE",
             "instruction":{  
-                "long":"Identifiez 3 relevés d'expert (cercle bleu clignotant)",
-                "short":"Identifiez relevés experts"
+                "long":"Identify 3 expert records (pulsating blue circles)",
+                "short":"Identify expert records"
             },
             "endCondition":[  
                 {  
@@ -350,8 +312,8 @@
             "type":"INVENTORY",
             "option":"NONE",
             "instruction":{  
-                "long":"Faites un maximum de relevé en un temps limite",
-                "short":"Faites relevés"
+                "long":"Record as many trees as possible in 15 minutes",
+                "short":"Record trees"
             },
             "AMechanicList":[  
                 {  
