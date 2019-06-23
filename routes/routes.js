@@ -172,8 +172,16 @@ module.exports = function (app, logger, pusher) {
           id: req.session.user,
           date:Date.now()
         }]
-        pusher.trigger('observation', 'modify_obs', {observation:result,userId:req.session.user})
         result.save()
+        result=result.toJSON()
+        result.hasImage = result.image ? true : false
+        delete result.image
+        for(let prev of result.prev){
+          prev.hasImage=prev.image ? true:false
+          delete prev.image
+        }
+        pusher.trigger('observation', 'modify_obs', {observation:result,userId:req.session.user})
+
         res.send({
           success: true,
           observation: result
@@ -286,7 +294,33 @@ module.exports = function (app, logger, pusher) {
       res.send({problems:incorrect})
     })
   })
-
+  app.get('/api/image/:id',function(req,res){
+    Observation.findById(req.params.id)
+    .exec(function(err,result){
+      if(result && result.image){
+      var img = new Buffer(result.image.split(',')[1], 'base64');
+      res.writeHead(200, {
+        'Content-Type': 'image/png',
+        'Content-Length': img.length 
+      });
+      res.end(img);
+      }})
+  })
+  app.get('/api/image/:id/hist/:version',function(req,res){
+    Observation.findById(req.params.id)
+    .exec(function(err,result){
+      let version=parseInt(req.params.version)
+      if(result && result.prev && result.prev[version] && result.prev[version].image){
+      let image=result.prev[version].image
+      console.log(image.split(',')[1])
+      var img = new Buffer(image.split(',')[1], 'base64');
+      res.writeHead(200, {
+        'Content-Type': 'image/png',
+        'Content-Length': img.length 
+      });
+      res.end(img);
+      }})
+  })
 
   app.post('/api/observation', function (req, res) {
     if(!req.session.user){
@@ -315,6 +349,10 @@ module.exports = function (app, logger, pusher) {
       date:Date.now()
     })
     observation.save()
+    observation=observation.toJSON()
+    observation.hasImage = observation.image ? true : false
+    delete observation.image
+
     pusher.trigger('observation', 'new_obs', {observation:observation,userId:req.session.user})
     res.send({
       success: true,
@@ -349,6 +387,10 @@ module.exports = function (app, logger, pusher) {
       date:Date.now()
     })
     observation.save()
+    observation=observation.toJSON()
+    observation.hasImage = observation.image ? true : false
+    delete observation.image
+
     pusher.trigger('observation', 'new_obs', {observation:observation,userId:observation.osmId})
     res.send({
       success: true,
@@ -393,10 +435,16 @@ module.exports = function (app, logger, pusher) {
     Observation.find({})
       .exec(function (err, results) {
         for (var i = 0; i < results.length; i++) {
+          results[i]=results[i].toJSON()
+          results[i].hasImage = results[i].image ? true : false
+          delete results[i].image
+          for(let prev of results[i].prev){
+            prev.hasImage=prev.image ? true:false
+            delete prev.image
+          }
           let validated = results[i].validation.find(function (value) {
             return value && value.id == req.session.user
           })
-          results[i]=results[i].toJSON()
         }
         Identification.find()
           .exec(function (err, identifications) {
