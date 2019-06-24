@@ -244,7 +244,7 @@ module.exports = function (app, logger, pusher) {
   })
   app.post('/api/identification', function (req, res) {
     var identification = new Identification()
-    identification.location.coordinates = req.body.releve.coordinates
+    identification.location.coordinates = req.body.releve.location.coordinates
     identification.genus = req.body.releve.genus
     identification.common = req.body.releve.common
     identification.specie = req.body.releve.specie
@@ -256,7 +256,7 @@ module.exports = function (app, logger, pusher) {
     identification.userGenus = req.body.releve.identificationValue.genus
     identification.userCommon = req.body.releve.identificationValue.common
     identification.userSpecie = req.body.releve.identificationValue.specie
-    identification.userImage = req.body.releve.identificationValue.image
+    identification.userImage = req.body.releve.identificationValue.userImage
     identification.userOsmId = req.session.user
     identification.username = req.session.username
     identification.save()
@@ -450,7 +450,11 @@ module.exports = function (app, logger, pusher) {
           .exec(function (err, identifications) {
             for (let releve of results) {
               for (let identification of identifications) {
+                console.log(identification.releveId)
                 if (releve._id == identification.releveId) {
+                  console.log('releve._id == identification.releveId')
+                  console.log(identification.userOsmId)
+                  console.log(req.session.user)
                   if (identification.userOsmId == req.session.user) {
                     releve.identificationValue = {
                       identification: true,
