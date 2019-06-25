@@ -209,7 +209,7 @@ module.exports = function (app, logger, pusher) {
           res.send('no user')
           return
         }
-        let key=_.without(_.keys(user.toObject()),'_id','id','__v','username')
+        let key=_.without(_.keys(user.toObject()),'_id','id','__v','username','gamificationMode')
         console.log(key)
         for(let k of key){
           user[k]=null

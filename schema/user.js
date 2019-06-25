@@ -9,7 +9,7 @@ const userSchema=Schema({
     explorationScore: Number,
     knowledgeScore:Number,
     knowledgeHistory:Array,
-    gamificationMode: Boolean,
+    gamificationMode: {type:Boolean,default:true},
     differentSpecie: Array,
     differentGenus: Array,
     mission: Object,
