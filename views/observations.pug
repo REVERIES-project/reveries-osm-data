@@ -1,0 +1,35 @@
+doctype html
+
+htlm
+    include ./modal.pug
+    head
+        title= title
+        script(src='https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js')
+        link(rel='stylesheet' href='https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css')
+        script(src='https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js')
+    body    
+        nav(class='navbar navbar-dark bg-dark')
+            form.form-inline
+                div(class='navbar-brand navbar-dark') Albiziapp Explorer
+                a.navbar-brand(href='/observations') Observations
+                a.navbar-brand(href='/identifications') Identifications
+        .container
+            .row
+                div(class='col-1 border border-dark bg-primary') Show JSON
+                div(class='col-1 border border-dark bg-primary') Username
+                div(class='col-2 border border-dark bg-primary') Genus
+                div(class='col-2 border border-dark bg-primary') Species
+                div(class='col-6 border border-dark bg-primary') Image
+                div(class='w-100')
+                each v in observations
+                    div(class='col-1 text-center p-1 border border-dark')
+                        button.btn.btn-primary(type='button' data-toggle='modal' data-target='#modal'+v._id) JSON
+                    div(class='col-1 text-center p-1 border border-dark') #{v.authorName}
+                    div(class='col-2 text-center p-2 border border-dark') #{v.genus}
+                    div(class='col-2 text-center p-2 border border-dark') #{v.specie}
+                    div(class='col-6 text-center p-2 border border-dark')
+                        img(src=v.image)
+                    +modal('JSON code','modal'+v._id)
+                        code(style='white-space:pre-line;') 
+                            = JSON.stringify(v, null, 10)
+                    div(class='w-100')

@@ -2,6 +2,7 @@ let Express = require('express')
 let session = require('express-session');
 let cors=require('cors')
 var mongoose = require('mongoose')
+var pug = require('pug')
 let Winston = require('winston')
 let BodyParser=require('body-parser')
 let fs=require('fs')
@@ -34,6 +35,8 @@ var logger = Winston.createLogger({
 })
 // creating express server
 let app = Express()
+app.set('view engine', 'pug');
+
 app.use(cors({
     origin:['http://localhost:8080','http://localhost:3000','http://albiziapp.reveries-project.fr','https://albiziapp.reveries-project.fr'],
     methods:['GET','POST'],
@@ -87,6 +90,8 @@ database.on('error', console.error.bind(console, 'MongoDB connection error:'));
 // Create  new MongoClient
 require('./routes/routes')(app,logger,pusher)
 require('./routes/logRoute')(app)
+require('./routes/pugRoute')(app)
+
 require('./routes/missionRoute')(app,pusher)
 if (ENV === "production") {
 	var secureServer = https.createServer({
