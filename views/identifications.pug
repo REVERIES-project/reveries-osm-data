@@ -22,13 +22,13 @@ htlm
                 div(class='col-6 border border-dark bg-primary') Image
                 div(class='w-100')
                 each v in identifications
-                    div(class='col-2 text-center p-2 border border-dark')
+                    div(class='col-1 text-center p-2 border border-dark')
                         button.btn.btn-primary(type='button' data-toggle='modal' data-target='#modal'+v._id) JSON
-                    div(class='col-2 text-center p-2 border border-dark') #{v.username}                   
+                    div(class='col-1 text-center p-2 border border-dark') #{v.username}                   
                     div(class='col-2 text-center p-2 border border-dark') #{v.userGenus}
                     div(class='col-2 text-center p-2 border border-dark') #{v.userSpecie}
                     div(class='col-6 text-center p-2 border border-dark')
-                        img(src=v.image)
+                        img(src=v.userImage)
                     +modal('JSON code','modal'+v._id)
                         code(style='white-space:pre-line;') 
                             = JSON.stringify(v, null, 10)
