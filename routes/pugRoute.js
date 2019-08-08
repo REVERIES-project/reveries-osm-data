@@ -11,7 +11,8 @@ module.exports = function (app) {
       app.get('/identifications', function (req, res) {
         Identification.find()
         .exec(function(err,result){
-            res.render('observations', { title: 'Hey', identifications: result});
+            console.log(err)
+            res.render('identifications', { title: 'Hey', identifications: result});
 
         })
       });
