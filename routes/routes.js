@@ -157,6 +157,8 @@ module.exports = function (app, logger, pusher) {
         result.genus = req.body.releve.genus
         result.common = req.body.releve.common
         result.specie = req.body.releve.specie
+        result.telaBotanicaTaxon= req.body.releve.telaBotanicaTaxon
+        result.commonGenus = req.body.releve.commonGenus
         result.confidence=req.body.releve.confidence
 
         if (req.body.releve.image) {
@@ -331,7 +333,9 @@ module.exports = function (app, logger, pusher) {
     observation.location.coordinates = req.body.releve.coordinates
     observation.genus = req.body.releve.genus
     observation.common = req.body.releve.common
-    observation.specie = req.body.releve.specie
+    observation.specie = req.body.releve.species
+    observation.telaBotanicaTaxon= req.body.releve.telaBotanicaTaxon
+    observation.commonGenus=req.body.releve.commonGenus
     observation.image = req.body.releve.image
     observation.crown = req.body.releve.crown
     observation.height= req.body.releve.height

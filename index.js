@@ -91,6 +91,7 @@ database.on('error', console.error.bind(console, 'MongoDB connection error:'));
 require('./routes/routes')(app,logger,pusher)
 require('./routes/logRoute')(app)
 require('./routes/pugRoute')(app)
+require('./routes/floreRoute')(app)
 
 require('./routes/missionRoute')(app,pusher)
 if (ENV === "production") {

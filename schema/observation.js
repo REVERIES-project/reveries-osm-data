@@ -9,8 +9,11 @@ const Confidence = Object.freeze({
 
 
 const observationSchema = Schema({
-    specie: String,
-    genus:String,
+    specie: {type:String,default:''},
+    genus:{type:String,default:''},
+    common:{type:String,default:''},
+    commonGenus:{type:String,default:''},
+    telaBotanicaTaxon:{type:String,default:''},
     osmId:String,
     image:String,
     crown:String,
@@ -19,7 +22,6 @@ const observationSchema = Schema({
     source:{type:String,default:'Albiziapp'},
     nodeId:String,
     noTree:[Object],
-    common:String,
     confidence:{type:String,enum:Object.values(Confidence),default:'Non renseignée'},
     authorName:String,
     modifierName:String,
