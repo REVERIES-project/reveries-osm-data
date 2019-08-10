@@ -95,13 +95,7 @@ require('./routes/floreRoute')(app)
 
 require('./routes/missionRoute')(app,pusher)
 if (ENV === "production") {
-	var secureServer = https.createServer({
-			key: fs.readFileSync('/etc/letsencrypt/live/albiziapp.reveries-project.fr/privkey.pem'),
-			cert: fs.readFileSync('/etc/letsencrypt/live/albiziapp.reveries-project.fr/cert.pem')
-		}, app)
-		.listen(PORT, function () {
-			console.log('Secure Server listening on port ' + PORT)
-		})
+  server=app.listen(PORT)
 }
 
 //start a simple server for developpement
