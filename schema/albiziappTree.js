@@ -11,6 +11,7 @@ const albiziappTree = Schema({
     usage:String,
     habitat:String,
     images:Array,
+    floreProperties:Array
 });
   
 
