@@ -38,7 +38,7 @@ let app = Express()
 app.set('view engine', 'pug');
 
 app.use(cors({
-    origin:['http://localhost:8080',,'http://localhost:5000','http://localhost:3000','http://albiziapp.reveries-project.fr','https://albiziapp.reveries-project.fr','https://viewer.albiziapp.reveries-project.fr'],
+    origin:['http://localhost:8080','http://be-random.eu/','http://localhost:5000','http://localhost:3000','http://albiziapp.reveries-project.fr','https://albiziapp.reveries-project.fr','https://viewer.albiziapp.reveries-project.fr'],
     methods:['GET','POST'],
     credentials: true // enable set cookie
 }
