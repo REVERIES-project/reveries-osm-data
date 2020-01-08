@@ -9,7 +9,7 @@
   "author": "gick",
   "license": "ISC",
   "dependencies": {
-    "axios": "^0.18.0",
+    "axios": "^0.18.1",
     "body-parser": "^1.18.3",
     "busboy-body-parser": "^0.3.2",
     "cors": "^2.8.5",
