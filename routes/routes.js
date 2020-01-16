@@ -308,6 +308,21 @@ module.exports = function (app, logger, pusher) {
       res.end(img);
       }})
   })
+  app.get('/api/firstObservationImage/:id',function(req,res){
+    Observation.findById(req.params.id)
+    .exec(function(err,result){
+      
+      if((result && result.lengh)){
+        res.send(result[result.prev.lengh].image)
+        return
+      }
+      else{
+        res.send(result.image)
+        return 
+      }
+    })
+
+  })
   app.get('/api/image/:id/hist/:version',function(req,res){
     Observation.findById(req.params.id)
     .exec(function(err,result){
