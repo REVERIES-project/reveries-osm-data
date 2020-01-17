@@ -312,8 +312,8 @@ module.exports = function (app, logger, pusher) {
     Observation.findById(req.params.id)
     .exec(function(err,result){
       
-      if((result && result.lengh)){
-        res.send(result[result.prev.lengh].image)
+      if((result && result.prev)){
+        res.send(result[result.prev.lengh-1].image)
         return
       }
       else{
