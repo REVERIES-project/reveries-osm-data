@@ -13,7 +13,7 @@
     "body-parser": "^1.18.3",
     "busboy-body-parser": "^0.3.2",
     "cors": "^2.8.5",
-    "express": "^4.16.4",
+    "express": "^4.17.3",
     "express-http-proxy": "^1.5.1",
     "express-session": "^1.15.6",
     "express-static-gzip": "^1.1.3",
